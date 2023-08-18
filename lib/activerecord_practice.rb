@@ -17,11 +17,61 @@ class Customer < ActiveRecord::Base
   #  You should NOT need to call Ruby library functions for sorting, filtering, etc.
 
   def self.any_candice
+    all_Candice =  Customer.where(first: "Candice")
     # YOUR CODE HERE to return all customer(s) whose first name is Candice
     # probably something like:  Customer.where(....)
   end
+
   def self.with_valid_email
+    valid_emails = Customer.where("email LIKE ?", "%@%")    
     # YOUR CODE HERE to return only customers with valid email addresses (containing '@')
   end
-  # etc. - see README.md for more details
+
+  def self.with_dot_org_email
+    org_emails = Customer.where("email LIKE ?", "%.org")
+  end
+
+  def self.with_invalid_email
+    invalid_email = Customer.where("email NOT LIKE ?", "%@%")
+  end
+
+  def self.with_blank_email
+    blank_email = Customer.where("email IS NULL")   
+  end
+
+  def self.born_before_1980
+    born = Customer.where("birthdate < ?", Date.new(1980, 1, 1))
+  end
+
+  def self.with_valid_email_and_born_before_1980
+    email_and_born = Customer.where("birthdate < ? AND email LIKE ? ", Date.new(1980, 1, 1), "%@%")
+  end
+
+  def self.last_names_starting_with_b
+    starting_with_b = Customer.where("last LIKE ?" , "b%").order(:birthdate)
+  end
+
+  def self.twenty_youngest
+    youngest = Customer.order(birthdate: :desc).limit(20)
+  end
+
+  def self.update_gussie_murray_birthdate
+    gussie = Customer.find_by(first: 'Gussie', last: 'Murray')
+    gussie.update(birthdate: Time.parse('2004-02-08'))
+  end
+
+  def self.change_all_invalid_emails_to_blank
+    invalid_emails_to_blank =  Customer.where("email NOT LIKE ?", "%@%")
+    invalid_emails_to_blank.update(email: "")
+  end
+
+  def self.delete_meggie_herman
+    meggie_herman = Customer.where("first LIKE ? AND last LIKE ?", "meggie", "herman")
+    meggie_herman.destroy_all
+  end
+
+  def self.delete_everyone_born_before_1978
+    everyone_born_before_1978 = Customer.where("birthdate < ?", Date.new(1978, 1, 1))
+    everyone_born_before_1978.destroy_all
+  end
 end
